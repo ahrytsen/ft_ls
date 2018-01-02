@@ -6,13 +6,33 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/02 16:11:23 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/02 21:43:26 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_LS_H
 # define FT_LS_H
 
-
+# include "libft.h"
+# include <dirent.h>
+# include <stdio.h>
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

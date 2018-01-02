@@ -6,13 +6,21 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/02 15:38:41 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/02 21:43:24 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <dirent.h>
-#include "libft.h"
 #include "ft_ls.h"
+
+void	ft_print_info(struct dirent f_info, t_flg flags)
+{
+
+}
+
+void	ft_ls(char	*path, int show_path)
+{
+
+}
 
 int	main(int ac, char **av)
 {
@@ -21,17 +29,22 @@ int	main(int ac, char **av)
 	struct dirent	*dp;
 	char			*flags;
 
-	i = 1;
+	i = 0;
 	flags = "";
-	if (ac > i && *av[i] == '-')
-		flags = av[i++];
-	while (i <= ac)
+	if (ac > 1 && *av[1] == '-')
 	{
-		if (!(dir = opendir(ac == 1 ? "." : av[i])))
-			ft_printf("ft_ls: %s: No such file or directory\n", av[i - 1]);
+		flags = *av[1];
+		i++;
+	}
+	while (i < ac)
+	{
+		if (!(dir = opendir(ac == 1 ? "." : av[i + 1])))
+			perror(ac == 1 ? "." : av[i + 1]);
 		while (dir && (dp = readdir(dir)))
-			dp->d_name[0] != '.' && !ft_strchr(flags, 'a')
-				? ft_printf("%s\n", dp->d_name) : 0;
+			if (dp->d_name[0] == '.')
+				ft_strchr(flags, 'a') ? ft_printf("%s\n", dp->d_name) : 0;
+			else
+				ft_printf("%s\n", dp->d_name);
 		i++;
 		dir ? closedir(dir) : 0;
 	}
