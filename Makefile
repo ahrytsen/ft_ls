@@ -6,16 +6,16 @@
 #    By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/30 18:43:03 by ahrytsen          #+#    #+#              #
-#    Updated: 2017/12/30 19:26:39 by ahrytsen         ###   ########.fr        #
+#    Updated: 2018/01/02 15:12:35 by ahrytsen         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 NAME		=	ft_ls
-DIRSRC		=	./src
-DIROBJ		=	./obj
-INCLUDE		=	./includes/ft_ls.h
-SUB_MAKE	=	./libftprintf
-INC_LIB		=	-L ./libftprintf -lft
+DIRSRC		=	./src/
+DIROBJ		=	./obj/
+INCLUDE		=	-I./includes/ -I./libftprintf/
+SUB_MAKE	=	./libftprintf/
+INC_LIB		=	-L./libftprintf -lftprintf
 SRC			=	ft_ls.c
 
 OBJ			=	$(SRC:.c=.o)
@@ -34,22 +34,22 @@ endif
 
 CC			=	gcc
 RM			=	rm -f
-ECHO		=	echo -e
+ECHO		=	echo
 
 
 $(NAME)	:		$(OBJ)
 ifdef SUB_MAKE
 				@(cd $(SUB_MAKE) && $(MAKE))
 endif
-				$(CC) $(INCLUDE) $(INC_LIB) $(CFLAGS) $(NAME) $(OBJS)
-				@$(ECHO) '> Compiled'
+				@$(CC) $(INCLUDE) $(INC_LIB) $(CFLAGS) -o $(NAME) $(OBJS)
+				@$(ECHO) "\033[31m> \033[32mft_ls: Compiled\033[0m"
 
 clean	:
 				@(cd $(DIROBJ) && $(RM) $(OBJ))
 ifdef SUB_MAKE
 				@(cd $(SUB_MAKE) && $(MAKE) clean)
 endif
-				@$(ECHO) '> Directory cleaned'
+				@$(ECHO) "\033[31m> \033[33mft_ls: Directory cleaned\033[0m"
 
 all		:		$(NAME)
 
@@ -58,11 +58,11 @@ ifdef SUB_MAKE
 				@(cd $(SUB_MAKE) && $(MAKE) fclean)
 endif
 				-@$(RM) $(NAME)
-				@$(ECHO) '> Remove executable'
+				@$(ECHO) "\033[31m> \033[33mft_ls: Remove executable\033[0m"
 
 re		:		fclean all
 
 .PHONY	:		all clean re
 
 %.o		:		$(DIRSRC)/%.c
-				$(CC) $(INCLUDE) $(CFLAGS) -o $(DIROBJ)/$@ -c $<
+				@$(CC) $(INCLUDE) $(CFLAGS) -o $(DIROBJ)/$@ -c $<

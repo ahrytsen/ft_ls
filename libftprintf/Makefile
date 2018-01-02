@@ -6,7 +6,7 @@
 #    By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/03 20:19:57 by ahrytsen          #+#    #+#              #
-#    Updated: 2017/12/29 20:50:39 by ahrytsen         ###   ########.fr        #
+#    Updated: 2018/01/02 15:08:17 by ahrytsen         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -35,15 +35,19 @@ all: $(SRC) $(NAME)
 $(NAME): $(OBJ) $(HDR)
 	@ar rc $(NAME) $(OBJ);
 	@ranlib $(NAME);
+	@echo "\033[31m> \033[32mlibftprintf: Compiled\033[0m"
 
 .c.o:
 	@gcc -Wall -Wextra -Werror -Ofast -c $<
+	@echo ".\c"
 
 clean:
 	@rm -f $(OBJ)
+	@echo "\033[31m> \033[33mlibftprintf: Directory cleaned\033[0m"
 
 fclean: clean
 	@rm -f $(NAME)
+	@echo "\033[31m> \033[33mRemove libftprintf.a\033[0m"
 
 re: fclean all
 
