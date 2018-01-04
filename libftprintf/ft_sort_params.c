@@ -1,29 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ls.h                                            :+:      :+:    :+:   */
+/*   ft_sort_params.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/04 17:11:05 by ahrytsen         ###   ########.fr       */
+/*   Created: 2018/01/04 14:58:18 by ahrytsen          #+#    #+#             */
+/*   Updated: 2018/01/04 15:14:55 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_LS_H
-# define FT_LS_H
+#include "libft.h"
 
-# include "libft.h"
-# include <dirent.h>
-# include <stdio.h>
-# include <sys/errno.h>
-# include <sys/stat.h>
+void	ft_sort_params(char **av, int ac)
+{
+	int		i;
+	int		j;
+	char	*tmp;
 
-# define FT_LFRMT 0x1
-# define FT_RECURS 0x2
-# define FT_ALL 0x4
-# define FT_REV 0x8
-# define FT_TIME_M 0x10
-# define FT_SHOW_PATH 0x20
-
-#endif
+	i = 1;
+	while (i < ac)
+	{
+		j = 0;
+		while (j < ac - i)
+		{
+			if (ft_strcmp(av[j], av[j + 1]) > 0)
+			{
+				tmp = av[j];
+				av[j] = av[j + 1];
+				av[j + 1] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
