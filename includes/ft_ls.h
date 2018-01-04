@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/04 17:11:05 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/04 20:35:34 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,6 @@
 # define FT_REV 0x8
 # define FT_TIME_M 0x10
 # define FT_SHOW_PATH 0x20
+# define FT_IS_FIRST 0x40
 
 #endif

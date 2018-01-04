@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/04 18:14:30 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/04 20:38:19 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,24 @@ void	ft_print_info(struct dirent f_info, uint64_t flags)
 
 void	ft_ls(char	*path, uint64_t flags)
 {
+	struct stat		st;
+	DIR				*dir;
+	struct dirent	*dp;
+	t_lis			*d_entr;
 
+	d_entr = NULL;
+	(flags & FT_IS_FIRST) ? 0 : ft_printf("\n");
+	(flags & FT_SHOW_PATH) ? ft_printf("%s:\n", path) : 0;
+	if (!(dir = opendir(path)))
+		ft_printf("ft_ls: %s\n", strerror(errno));
+	else
+	{
+		while ((dp = readdir(dir)))
+			dp->d_name[0] != '.' && !ft_strchr(flags, 'a')
+				? ft_printf("%s\n", dp->d_name) : 0;
+		i++;
+		closedir(dir);
+	}
 }
 
 int	main(int ac, char **av)
@@ -75,5 +92,4 @@ int	main(int ac, char **av)
 			perror(av[i[0]]);
 		else
 			j++;
-
 }
