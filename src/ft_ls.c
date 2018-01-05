@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/05 21:45:44 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/05 21:56:04 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,11 @@ static void	ft_proc_args(t_file *args, uint64_t *flags, int mod)
 		free(args);
 	}
 	else
-	{
-		(mod == 3 || !(args->st.st_mode & S_IFDIR))
-			? ft_printf("%s\n", args->path) : 0;
-		//*flags &= ~FT_IS_FIRST;
-	}
+		if (mod == 3 || !(args->st.st_mode & S_IFDIR))
+		{
+			ft_printf("%s\n", args->path);
+			*flags &= ~FT_IS_FIRST;
+		}
 	(*flags & FT_REV) ? ft_proc_args(tmp, flags, mod) : 0;
 }
 
@@ -105,12 +105,13 @@ int	main(int ac, char **av)
 	uint64_t	flags;
 
 	i = 1;
-	flags = FT_IS_FIRST | FT_SHOW_PATH;
+	flags = FT_IS_FIRST;
 	args = NULL;
 	if (ac > 1 && *av[1] == '-' && i++)
 		(c = ft_get_flags(av[1] + 1, &flags)) ? ft_usage(av[0], c) : 0;
 	ft_sort_params(av + i, ac - i);
 	(i == ac) ? ft_ls(".", &flags) : 0;
+	(ac - i > 1) ? flags |= FT_SHOW_PATH : 0;
 	while (i < ac)
 		if (((flags & FT_LFRMT) ? lstat(av[i++], &tmp_st)
 			 : stat(av[i++], &tmp_st)) < 0)
