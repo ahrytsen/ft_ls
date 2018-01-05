@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/05 12:13:52 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/05 21:19:38 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,9 @@ typedef struct	s_file
 	struct stat		st;
 	struct s_file	*next;
 }				t_file;
+
+void			ft_ls(char *path, uint64_t *flags);
+t_file			*ft_newnod(char *path, struct stat *st);
+void			ft_bufadd(t_file **files, t_file *new);
 
 #endif
