@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/04 20:38:19 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/05 15:30:48 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ static char	ft_get_flags(char *fl, uint64_t *flags)
 	return (0);
 }
 
-void	ft_print_info(struct dirent f_info, uint64_t flags)
+void	ft_print_info(struct dirent f_info, uint64_t *flags)
 {
 
 }
 
-void	ft_ls(char	*path, uint64_t flags)
+void	ft_ls(char	*path, uint64_t *flags)
 {
 	struct stat		st;
 	DIR				*dir;
@@ -73,23 +73,26 @@ void	ft_ls(char	*path, uint64_t flags)
 int	main(int ac, char **av)
 {
 	int			i;
-	int			j;
-	struct stat	*st;
+	struct stat	tmp_st;
+	t_file		*args;
 	uint64_t	flags;
-	char		tmp;
 
 	i = 1;
-	j = 0;
 	flags = 0;
+	args = NULL;
 	if (ac > 1 && *av[1] == '-' && i++)
-		(tmp = ft_get_flags(av[1] + 1, &flags)) ? ft_usage(av[0], tmp) : 0;
+		(j = ft_get_flags(av[1] + 1, &flags)) ? ft_usage(av[0], j) : 0;
 	ft_sort_params(av + i, ac - i);
-	(i == ac) ? ft_ls(".", flags) : 0;
-	st = (i < ac) ? ft_memalloc(sizeof(struct stat) * (ac - i + 1)) : NULL;
-	while (i < ac)
-		if (((flags & FT_LFRMT) ? lstat(av[i++], st + j)
-			: stat(av[i++]), st + j) < 0)
-			perror(av[i[0]]);
+	(i == ac) ? ft_ls(".", &flags) : 0;
+	while (args && i < ac)
+	{
+		if (((flags & FT_LFRMT) ? lstat(av[i++], &(args->st))
+			 : stat(av[i++], &(args->st))) < 0)
+			ft_printf("ft_ls: %s\n", strerror(errno));
 		else
 			j++;
+	}
+	i = (flags & FT_REV) ? j : 0;
+	(flags & FT_REV) ? 0 : j = 0;
+	while ()
 }
