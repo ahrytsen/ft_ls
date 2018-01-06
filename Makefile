@@ -6,7 +6,7 @@
 #    By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/30 18:43:03 by ahrytsen          #+#    #+#              #
-#    Updated: 2018/01/05 21:20:30 by ahrytsen         ###   ########.fr        #
+#    Updated: 2018/01/06 21:27:44 by ahrytsen         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -39,9 +39,9 @@ ECHO		=	echo
 
 $(NAME)	:		$(OBJ)
 ifdef SUB_MAKE
-				@(cd $(SUB_MAKE) && $(MAKE))
+				@(cd $(SUB_MAKE) && $(MAKE) -j3)
 endif
-				@$(CC) $(INCLUDE) $(INC_LIB) $(CFLAGS) -o $(NAME) $(OBJS)
+				@$(CC) $(INCLUDE) $(INC_LIB) $(CFLAGS) -Ofast -o $(NAME) $(OBJS)
 				@$(ECHO) "\033[31m> \033[32mft_ls: Compiled\033[0m"
 
 clean	:
@@ -65,4 +65,4 @@ re		:		fclean all
 .PHONY	:		all clean re
 
 %.o		:		$(DIRSRC)/%.c
-				@$(CC) $(INCLUDE) $(CFLAGS) -o $(DIROBJ)/$@ -c $<
+				@$(CC) $(INCLUDE) $(CFLAGS) -Ofast -o $(DIROBJ)/$@ -c $<

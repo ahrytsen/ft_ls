@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/05 21:19:38 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/06 20:12:14 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 
 typedef struct	s_file
 {
+	char			*name;
 	char			*path;
 	struct stat		st;
 	struct s_file	*next;

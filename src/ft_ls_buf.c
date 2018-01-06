@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 14:04:50 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/05 21:20:53 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/06 19:58:34 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ t_file	*ft_newnod(char *path, struct stat *st)
 	if (!(newnod = (t_file*)ft_memalloc(sizeof(t_file))))
 		return (NULL);
 	newnod->path = path;
-	ft_memcpy(&(newnod->st), st, sizeof(struct stat));
+	st ? ft_memcpy(&(newnod->st), st, sizeof(struct stat)) : 0;
 	return (newnod);
 }
 
-void		ft_bufadd(t_file **files, t_file *new)
+void	ft_bufadd(t_file **files, t_file *new)
 {
 	if (new && files)
 	{
