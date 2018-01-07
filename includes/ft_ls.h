@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/06 20:12:14 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/07 22:18:51 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define FT_LS_H
 
 # include "libft.h"
+# include <time.h>
 # include <dirent.h>
 # include <stdio.h>
 # include <sys/errno.h>
@@ -38,5 +39,6 @@ typedef struct	s_file
 void			ft_ls(char *path, uint64_t *flags);
 t_file			*ft_newnod(char *path, struct stat *st);
 void			ft_bufadd(t_file **files, t_file *new);
+t_file			*ft_ls_mtime_sort(t_file *root);
 
 #endif
