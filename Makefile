@@ -6,7 +6,7 @@
 #    By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/30 18:43:03 by ahrytsen          #+#    #+#              #
-#    Updated: 2018/01/07 18:12:26 by ahrytsen         ###   ########.fr        #
+#    Updated: 2018/01/08 21:18:21 by ahrytsen         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -16,7 +16,7 @@ DIROBJ		=	./obj/
 INCLUDE		=	-I./includes/ -I./libftprintf/
 SUB_MAKE	=	./libftprintf/
 INC_LIB		=	-L./libftprintf -lftprintf
-SRC			=	ft_ls.c ft_ls_buf.c ft_ls_sort.c
+SRC			=	ft_ls.c ft_ls_buf.c ft_ls_sort.c ft_ls_helpers.c
 
 OBJ			=	$(SRC:.c=.o)
 OBJS		=	$(OBJ:%=$(DIROBJ)%)

@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 14:04:50 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/06 19:58:34 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/08 17:32:37 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ void	ft_bufadd(t_file **files, t_file *new)
 	if (new && files)
 	{
 		new->next = *files;
+		new->m_w = *files ? (*files)->m_w : ft_memalloc(sizeof(t_wf));
+		new->m_w->count++;
 		*files = new;
 	}
 }
+/*
+void	ft_print_node(t_file *files, uint64_t *flags)
+{
+
+}*/

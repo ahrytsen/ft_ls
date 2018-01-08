@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/08 03:26:05 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/08 19:03:42 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,8 @@ void		ft_ls(char *path, uint64_t *flags)
 	files = NULL;
 	(*flags & FT_IS_FIRST) ? *flags &= ~FT_IS_FIRST : ft_printf("\n");
 	(*flags & FT_SHOW_PATH) ? ft_printf("%s:\n", path) : 0;
-	if (!(dir = opendir(path)) && write(2, "ls: ", 7))
-		perror((tmp = ft_strrchr(path, '/')) ? tmp + 1 : path);
+	if (!(dir = opendir(path)) && write(2, "ls: ", 4))
+		perror(((tmp = ft_strrchr(path, '/')) ? tmp + 1 : path));
 	else if ((path = ft_strextend(path, ft_strdup("/"))))
 		while ((dp = readdir(dir)))
 			if (dp->d_name[0] != '.' || (*flags & FT_ALL))
@@ -112,12 +112,11 @@ int			main(int ac, char **av)
 	args = NULL;
 	while (ac > i && *av[i] == '-')
 		(c = ft_get_flags(av[i++] + 1, &flags)) ? ft_usage(av[0], c) : 0;
-	ft_sort_params(av + i, ac - i);
 	(i == ac) ? ft_ls(ft_strdup("."), &flags) : 0;
 	(ac - i > 1) ? flags |= FT_SHOW_PATH : 0;
 	while (i < ac)
 		if (((flags & FT_LFRMT) ? lstat(av[i++], &tmp_st)
-			 : stat(av[i++], &tmp_st)) < 0 && write(2, "ls: ", 4))
+			: stat(av[i++], &tmp_st)) < 0 && write(2, "ls: ", 4))
 			perror(av[i - 1]);
 		else
 			ft_bufadd(&args, ft_newnod(ft_strdup(av[i - 1]), &tmp_st));
