@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/07 22:18:51 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/08 01:31:22 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,10 @@
 # define FT_RECURS 0x2
 # define FT_ALL 0x4
 # define FT_REV 0x8
-# define FT_TIME_M 0x10
+# define FT_TMSORT 0x10
 # define FT_SHOW_PATH 0x20
 # define FT_IS_FIRST 0x40
+# define FT_USORT 0x80
 
 typedef struct	s_file
 {
@@ -39,6 +40,6 @@ typedef struct	s_file
 void			ft_ls(char *path, uint64_t *flags);
 t_file			*ft_newnod(char *path, struct stat *st);
 void			ft_bufadd(t_file **files, t_file *new);
-t_file			*ft_ls_mtime_sort(t_file *root);
+t_file			*ft_ls_sort(t_file *root, uint64_t *flags);
 
 #endif
