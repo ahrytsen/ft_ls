@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/07 18:13:22 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/08 20:58:10 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/09 19:15:57 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static t_file	*ft_ls_mtime_sort(t_file *root)
 	{
 		node = root;
 		root = root->next;
-		if (!n_r || node->st.st_mtimespec.tv_sec < n_r->st.st_mtimespec.tv_sec)
+		if (!n_r || node->time < n_r->time)
 		{
 			node->next = n_r;
 			n_r = node;
@@ -31,8 +31,7 @@ static t_file	*ft_ls_mtime_sort(t_file *root)
 		else
 		{
 			cur = n_r;
-			while (cur->next && node->st.st_mtimespec.tv_sec
-				>= cur->next->st.st_mtimespec.tv_sec)
+			while (cur->next && node->time >= cur->next->time)
 				cur = cur->next;
 			node->next = cur->next;
 			cur->next = node;
@@ -72,30 +71,31 @@ static t_file	*ft_ls_path_sort(t_file *root)
 
 static void		ft_grep_frmt(t_file *root, uint64_t *flags)
 {
-	struct paswd	*pwd;
-	struct groop	*gr;
-	size_t			tmp;
+	uint16_t		tmp;
 
 	while (root)
 	{
-		pwd = getpwuid(root->st.st_uid);
-		gr = getgrgid(root->st.st_gid);
-		root->owner = pwd ? ft_strdup(pwd->pw_name) : ft_ltoa(root->st.st_uid);
-		root->group = gr ? ft_strdup(gr->gr_name) : ft_ltoa(root->st.st_gid);
-		root->links = ft_ultoa(root->st.st_nlink, 10, 0);
-		root->size = ft_ultoa_base(root->st.st_size, 10, 0);
-
+		if ((*flags & FT_TASORT) || (*flags & FT_TCSORT))
+			root->time = (*flags & FT_TASORT)
+				? root->st.st_atimespec.tv_sec : root->st.st_ctimespec.tv_sec;
+		else
+			root->time = root->st.st_mtimespec.tv_sec;
+		tmp = ft_strlen(root->name ? root->name : root->path);
+		tmp > root->m_w->name_w ? root->m_w->name_w = tmp : 0;
+		ft_get_mod(root->st.st_mode, root->mod);
+		if (*flags & FT_LFRMT)
+			ft_grep_helper(root);
 		root = root->next;
 	}
 }
 
 t_file			*ft_ls_sort(t_file *root, uint64_t *flags)
 {
+	ft_grep_frmt(root, flags);
 	if (!(*flags & FT_USORT))
 	{
 		root = ft_ls_path_sort(root);
-		(*flags & FT_TMSORT) ? root = ft_ls_mtime_sort(root) : 0;
+		(*flags & FT_TSORT) ? root = ft_ls_mtime_sort(root) : 0;
 	}
-	ft_grep_frmt(root, flags);
 	return (root);
 }

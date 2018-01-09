@@ -6,43 +6,61 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/08 19:03:42 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/09 21:12:40 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ft_ls.h"
 
-static void	ft_usage(char *p_name, char tmp)
-{
-	ft_putstr_fd(p_name, 2);
-	ft_putstr_fd(": illegal option -- ", 2);
-	ft_putchar_fd(tmp, 2);
-	ft_putstr_fd("\nusage: ft_ls [-Ralrt1] [file ...]\n", 2);
-	exit(1);
-}
-
 static char	ft_get_flags(char *fl, uint64_t *flags)
 {
-	while (*fl)
-	{
+	while (*++fl)
 		if (*fl == 'l')
-			*flags |= FT_LFRMT;
-		else if (*fl == 'R')
-			*flags |= FT_RECURS;
-		else if (*fl == 'a')
-			*flags |= FT_ALL;
-		else if (*fl == 'r')
-			*flags |= FT_REV;
-		else if (*fl == 't')
-			*flags |= FT_TMSORT;
-		else if (*fl != '1')
-		{
-			errno = EIO;
+			*flags = (*flags | FT_LFRMT) & ~FT_COLUMNS;
+		else if (*fl == 'R' || *fl == 'a')
+			*flags |= (*fl == 'R') ? FT_RECURS : FT_ALL;
+		else if (*fl == 'r' || *fl == 't')
+			*flags |= (*fl == 'r') ? FT_REV : FT_TSORT;
+		else if (*fl == 'u')
+			*flags = (*flags & ~FT_TCSORT) | FT_TASORT;
+		else if (*fl == 'U')
+			*flags = (*flags & ~FT_TASORT) | FT_TCSORT;
+		else if (*fl == 'f')
+			*flags |= FT_USORT | FT_ALL;
+		else if (*fl == '1')
+			*flags &= ~FT_COLUMNS;
+		else if (*fl == 'g' || *fl == 'd')
+			*flags |= (*fl == 'g') ? FT_SUPROWNER : FT_DIRASREG;
+		else if (*fl == 'G')
+			*flags |= FT_COLOR;
+		else
 			return (*fl);
-		}
-		fl++;
-	}
 	return (0);
+}
+
+static void	ft_flags(char **av, int *i, int *ac, uint64_t *flags)
+{
+	char	c;
+
+	while (*ac > *i && av[*i][0] == '-' && av[*i][1])
+	{
+		if ((c = ft_get_flags(av[*i], flags)))
+		{
+			if (!ft_strcmp("--", av[*i]))
+				c = 0;
+			(*i)++;
+			break ;
+		}
+		(*i)++;
+	}
+	if (c)
+	{
+		ft_putstr_fd(*av, 2);
+		ft_putstr_fd(": illegal option -- ", 2);
+		ft_putchar_fd(c, 2);
+		ft_putstr_fd("\nusage: ft_ls [-Ralrt1] [file ...]\n", 2);
+		exit(1);
+	}
 }
 
 static void	ft_proc_args(t_file *args, uint64_t *flags, int mod)
@@ -55,17 +73,16 @@ static void	ft_proc_args(t_file *args, uint64_t *flags, int mod)
 	tmp = args->next;
 	if (mod < 1)
 	{
-		(!mod && S_ISDIR(args->st.st_mode)
+		(!mod && S_ISDIR(args->st.st_mode) && !(*flags & FT_DIRASREG)
 		&& (!args->name || (ft_strcmp("..", args->name)
 							&& ft_strcmp(".", args->name))))
 			? ft_ls(ft_strdup(args->path), flags) : 0;
-		free(args->path);
-		free(args->name);
-		free(args);
+		ft_del_node(args);
 	}
-	else if (mod == 2 || !(args->st.st_mode & S_IFDIR))
+	else if (mod == 2 || !(args->st.st_mode & S_IFDIR)
+			|| (*flags & FT_DIRASREG))
 	{
-		ft_printf("%s\n", args->name ? args->name : args->path);
+		ft_print_node(args, flags);
 		*flags = (*flags & ~FT_IS_FIRST) | FT_SHOW_PATH;
 	}
 	(*flags & FT_REV) ? ft_proc_args(tmp, flags, mod) : 0;
@@ -94,6 +111,7 @@ void		ft_ls(char *path, uint64_t *flags)
 			}
 	dir ? closedir(dir) : 0;
 	files = ft_ls_sort(files, flags);
+	*flags & FT_LFRMT && files ? ft_printf("total %d\n", files->m_w->total) : 0;
 	ft_proc_args(files, flags, 2);
 	ft_proc_args(files, flags, ((*flags & FT_RECURS) ? 0 : -1));
 	free(path);
@@ -102,23 +120,24 @@ void		ft_ls(char *path, uint64_t *flags)
 int			main(int ac, char **av)
 {
 	int			i;
-	char		c;
 	struct stat	tmp_st;
 	t_file		*args;
 	uint64_t	flags;
 
 	i = 1;
-	flags = FT_IS_FIRST;
+	flags = FT_IS_FIRST | FT_COLUMNS;
 	args = NULL;
-	while (ac > i && *av[i] == '-')
-		(c = ft_get_flags(av[i++] + 1, &flags)) ? ft_usage(av[0], c) : 0;
-	(i == ac) ? ft_ls(ft_strdup("."), &flags) : 0;
+	ft_flags(av, &i, &ac, &flags);
+	(i == ac) ? ft_bufadd(&args, ft_newnod(ft_strdup("."), NULL)) : 0;
+	if (i == ac)
+		stat(".", &(args->st)) < 0 ? perror(".") : 0;
 	(ac - i > 1) ? flags |= FT_SHOW_PATH : 0;
 	while (i < ac)
-		if (((flags & FT_LFRMT) ? lstat(av[i++], &tmp_st)
+		if (((flags & FT_LFRMT || stat(av[i], &tmp_st) < 0)
+			? lstat(av[i++], &tmp_st)
 			: stat(av[i++], &tmp_st)) < 0 && write(2, "ls: ", 4))
 			perror(av[i - 1]);
-		else
+		else if (!(errno = 0))
 			ft_bufadd(&args, ft_newnod(ft_strdup(av[i - 1]), &tmp_st));
 	args = ft_ls_sort(args, &flags);
 	ft_proc_args(args, &flags, 1);
