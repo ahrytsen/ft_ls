@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/09 21:12:40 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/09 21:57:49 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ int			main(int ac, char **av)
 	flags = FT_IS_FIRST | FT_COLUMNS;
 	args = NULL;
 	ft_flags(av, &i, &ac, &flags);
+	ft_sort_params(av + i, ac - i);
 	(i == ac) ? ft_bufadd(&args, ft_newnod(ft_strdup("."), NULL)) : 0;
 	if (i == ac)
 		stat(".", &(args->st)) < 0 ? perror(".") : 0;
@@ -136,7 +137,7 @@ int			main(int ac, char **av)
 		if (((flags & FT_LFRMT || stat(av[i], &tmp_st) < 0)
 			? lstat(av[i++], &tmp_st)
 			: stat(av[i++], &tmp_st)) < 0 && write(2, "ls: ", 4))
-			perror(av[i - 1]);
+			av[i - 1][0] ? perror(av[i -1]) : " ");
 		else if (!(errno = 0))
 			ft_bufadd(&args, ft_newnod(ft_strdup(av[i - 1]), &tmp_st));
 	args = ft_ls_sort(args, &flags);
