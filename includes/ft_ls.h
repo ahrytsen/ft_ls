@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/09 20:13:03 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/10 18:51:31 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # include <pwd.h>
 # include <uuid/uuid.h>
 # include <grp.h>
+# include <sys/xattr.h>
+# include <sys/acl.h>
 
 # define FT_LFRMT 0x1
 # define FT_RECURS 0x2
@@ -63,7 +65,7 @@ typedef struct	s_file
 	struct stat		st;
 	struct s_file	*next;
 	struct s_file	*prev;
-	char			mod[11];
+	char			mod[12];
 	char			*links;
 	char			*owner;
 	char			*group;

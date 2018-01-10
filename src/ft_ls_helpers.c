@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/08 20:58:35 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/09 20:41:51 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/10 22:15:20 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,22 @@ void		ft_get_mod(mode_t m, char *mod)
 	S_ISSOCK(m) ? *mod = 's' : 0;
 	*(++mod) = (m & S_IRUSR) ? 'r' : '-';
 	*(++mod) = (m & S_IWUSR) ? 'w' : '-';
-	*(++mod) = (m & S_IXUSR) ? 'x' : '-';
+	if (m & S_IXUSR)
+		*(++mod) = (m & S_ISUID) ? 's' : 'x';
+	else
+		*(++mod) = (m & S_ISUID) ? 'S' : '-';
 	*(++mod) = (m & S_IRGRP) ? 'r' : '-';
 	*(++mod) = (m & S_IWGRP) ? 'w' : '-';
-	*(++mod) = (m & S_IXGRP) ? 'x' : '-';
+	if (m & S_IXGRP)
+		*(++mod) = (m & S_ISGID) ? 's' : 'x';
+	else
+		*(++mod) = (m & S_ISGID) ? 'S' : '-';
 	*(++mod) = (m & S_IROTH) ? 'r' : '-';
 	*(++mod) = (m & S_IWOTH) ? 'w' : '-';
-	*(++mod) = (m & S_IXOTH) ? 'x' : '-';
+	if (m & S_IXOTH)
+		*(++mod) = (m & S_ISVTX) ? 't' : 'x';
+	else
+		*(++mod) = (m & S_ISVTX) ? 'T' : '-';
 	*(++mod) = ' ';
 }
 
@@ -51,6 +60,20 @@ static void	ft_file_time(t_file *node)
 	node->m_w->total += node->st.st_blocks;
 }
 
+static char	*ft_get_devnums(t_file *node)
+{
+	char		*res;
+	char		*tmp;
+	uint32_t	min;
+
+	min = minor(node->st.st_rdev);
+	res = ft_ltoa(major(node->st.st_rdev));
+	res = ft_strextend(res, ft_strdup(min < 0 || min > 255 ? ", 0x" : ", "));
+	tmp = min > 127 ? ft_ultoa_base(min, 16, 'a') : ft_ltoa(min);
+	res = ft_strextend(res, tmp);
+	return (res);
+}
+
 void		ft_grep_helper(t_file *node)
 {
 	struct passwd	*pwd;
@@ -62,7 +85,8 @@ void		ft_grep_helper(t_file *node)
 	gr = getgrgid(node->st.st_gid);
 	node->owner = pwd ? ft_strdup(pwd->pw_name) : ft_ltoa(node->st.st_uid);
 	node->group = gr ? ft_strdup(gr->gr_name) : ft_ltoa(node->st.st_gid);
-	node->size = ft_ultoa_base(node->st.st_size, 10, 0);
+	node->size = (node->mod[0] == 'c' || node->mod[0] == 'b')
+		? ft_get_devnums(node) : ft_ultoa_base(node->st.st_size, 10, 0);
 	(tmp = ft_strlen(node->links)) > node->m_w->links_w
 		? node->m_w->links_w = tmp : 0;
 	(tmp = ft_strlen(node->owner)) > node->m_w->owner_w

@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/07 18:13:22 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/09 19:15:57 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/10 21:30:54 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,15 @@ static void		ft_grep_frmt(t_file *root, uint64_t *flags)
 		tmp > root->m_w->name_w ? root->m_w->name_w = tmp : 0;
 		ft_get_mod(root->st.st_mode, root->mod);
 		if (*flags & FT_LFRMT)
+		{
 			ft_grep_helper(root);
+			acl_get_file(root->path, ACL_TYPE_EXTENDED) != 0
+			  ? root->mod[10] = '+' : 0;
+			if (listxattr(root->path, NULL, 0, XATTR_NOFOLLOW) > 0)
+				root->mod[10] = '@';
+			else
+				errno = 0;
+		}
 		root = root->next;
 	}
 }
