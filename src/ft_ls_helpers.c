@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/08 20:58:35 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/11 22:25:43 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/12 00:19:47 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void		ft_color_out(char dev_t, int mod)
 	{
 		dev_t == 'b' ? ft_printf("\033[46m\033[34m") : 0;
 		dev_t == 'c' ? ft_printf("\033[43m\033[34m") : 0;
-		dev_t == 'd' ? ft_printf("\033[36m") : 0;
+		dev_t == 'd' ? ft_printf("\033[1;96m") : 0;
 		dev_t == 'p' ? ft_printf("\033[0m") : 0;
 		dev_t == 'l' ? ft_printf("\033[35m") : 0;
 		dev_t == 's' ? ft_printf("\033[0m") : 0;
