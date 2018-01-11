@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/10 14:29:36 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/11 22:26:15 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,20 @@ static char	ft_get_flags(char *fl, uint64_t *flags)
 		else if (*fl == 'r' || *fl == 't')
 			*flags |= (*fl == 'r') ? FT_REV : FT_TSORT;
 		else if (*fl == 'u')
-			*flags = (*flags & ~FT_TCSORT) | FT_TASORT;
+			*flags = ((*flags & ~FT_TCSORT) & ~FT_TCHSORT) | FT_TASORT;
 		else if (*fl == 'U')
-			*flags = (*flags & ~FT_TASORT) | FT_TCSORT;
-		else if (*fl == 'f')
-			*flags |= FT_USORT | FT_ALL;
-		else if (*fl == '1')
-			*flags &= ~FT_COLUMNS;
+			*flags = ((*flags & ~FT_TASORT) & ~FT_TCHSORT) | FT_TCSORT;
+		else if (*fl == 'c')
+			*flags = ((*flags & ~FT_TASORT) & ~FT_TCSORT) | FT_TCHSORT;
+		else if (*fl == '1' || *fl == 'f')
+			*flags = (*fl == '1') ? (*flags & ~FT_COLUMNS) & ~FT_LFRMT
+				: *flags | FT_USORT | FT_ALL;
 		else if (*fl == 'g' || *fl == 'd')
-			*flags |= (*fl == 'g') ? FT_SUPROWNER : FT_DIRASREG;
-		else if (*fl == 'G')
-			*flags |= FT_COLOR;
+			*flags |= (*fl == 'g') ? FT_SUPROWNER | FT_LFRMT : FT_DIRASREG;
+		else if (*fl == 'G' || *fl == 'S')
+			*flags |= (*fl == 'G') ? FT_COLOR : FT_SSORT;
+		else if (*fl == '@' || *fl == 'e')
+			*flags |= (*fl == '@') ? FT_XATTR : FT_ACL;
 		else
 			return (*fl);
 	return (0);
@@ -79,10 +82,11 @@ static void	ft_proc_args(t_file *args, uint64_t *flags, int mod)
 			? ft_ls(ft_strdup(args->path), flags) : 0;
 		ft_del_node(args);
 	}
-	else if (mod == 2 || !(args->st.st_mode & S_IFDIR)
-			|| (*flags & FT_DIRASREG))
+	else if ((mod == 2 || !(args->st.st_mode & S_IFDIR)
+			|| (*flags & FT_DIRASREG)) && !args->w_prnt)
 	{
-		ft_print_node(args, flags);
+		(*flags & FT_COLUMNS)
+			? ft_print_columns(args, flags) : ft_print_node(args, flags);
 		*flags = (*flags & ~FT_IS_FIRST) | FT_SHOW_PATH;
 	}
 	(*flags & FT_REV) ? ft_proc_args(tmp, flags, mod) : 0;

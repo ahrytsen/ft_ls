@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/10 18:51:31 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/11 21:38:44 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <grp.h>
 # include <sys/xattr.h>
 # include <sys/acl.h>
+# include <sys/ioctl.h>
 
 # define FT_LFRMT 0x1
 # define FT_RECURS 0x2
@@ -40,6 +41,10 @@
 # define FT_COLOR 0x800
 # define FT_SUPROWNER 0x1000
 # define FT_DIRASREG 0x2000
+# define FT_XATTR 0x4000
+# define FT_ACL 0x8000
+# define FT_SSORT 0x10000
+# define FT_TCHSORT 0x20000
 
 typedef struct	s_wf
 {
@@ -71,6 +76,7 @@ typedef struct	s_file
 	char			*group;
 	char			*size;
 	char			date[14];
+	acl_t			acl;
 }				t_file;
 
 void			ft_ls(char *path, uint64_t *flags);
@@ -80,6 +86,11 @@ t_file			*ft_ls_sort(t_file *root, uint64_t *flags);
 void			ft_get_mod(mode_t m, char *mod);
 void			ft_grep_helper(t_file *node);
 void			ft_print_node(t_file *node, uint64_t *flags);
+void			ft_print_columns(t_file *node, uint64_t *flags);
 void			ft_del_node(t_file *node);
+void			ft_print_xattr(t_file *node);
+void			ft_print_acl(t_file *node);
+t_file			*ft_ls_size_sort(t_file *root);
+void			ft_color_out(char dev_t, int mod);
 
 #endif
