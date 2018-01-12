@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/11 22:26:15 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/12 02:34:20 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void		ft_ls(char *path, uint64_t *flags)
 			}
 	dir ? closedir(dir) : 0;
 	files = ft_ls_sort(files, flags);
-	*flags & FT_LFRMT && files ? ft_printf("total %d\n", files->m_w->total) : 0;
+	files && (FT_LFRMT & *flags) ? ft_printf("total %d\n", files->m_w->total) : 0;
 	ft_proc_args(files, flags, 2);
 	ft_proc_args(files, flags, ((*flags & FT_RECURS) ? 0 : -1));
 	free(path);

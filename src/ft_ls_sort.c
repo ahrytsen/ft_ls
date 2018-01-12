@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/07 18:13:22 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/11 22:25:20 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/12 03:26:34 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,14 +112,19 @@ t_file			*ft_ls_sort(t_file *root, uint64_t *flags)
 				: ft_ls_mtime_sort(root);
 	}
 	tmp = root;
-	while (tmp->next)
+	while (tmp && tmp->next)
 	{
 		tmp->next->prev = tmp;
 		tmp = tmp->next;
 	}
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-	root->m_w->columns = (uint16_t)w.ws_col / (root->m_w->name_w + 1);
-	root->m_w->rows = root->m_w->count / root->m_w->columns
-	+ ((root->m_w->count % root->m_w->columns > 0) ? 1 : 0);
+	if (root && (*flags & FT_COLUMNS))
+	{
+		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+		root->m_w->columns = (uint16_t)w.ws_col / (root->m_w->name_w + 1);
+		root->m_w->rows = root->m_w->columns
+			? root->m_w->count / root->m_w->columns
+			+ ((root->m_w->count % root->m_w->columns > 0) ? 1 : 0)
+			: root->m_w->count;
+	}
 	return (root);
 }
