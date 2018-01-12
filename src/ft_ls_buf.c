@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 14:04:50 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/11 22:24:50 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/12 13:09:16 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ void	ft_print_columns(t_file *node, uint64_t *flags)
 
 	while (node && !node->w_prnt)
 	{
-		(*flags & FT_COLOR) ? ft_color_out(node->mod[0], 0) : 0;
+		(*flags & FT_COLOR) ? ft_color_out(node->mod, 0) : 0;
 		ft_printf("%-*s", node->m_w->name_w + 1,
 				node->name ? node->name : node->path);
-		(*flags & FT_COLOR) ? ft_color_out(node->mod[0], 1) : 0;
+		(*flags & FT_COLOR) ? ft_color_out(node->mod, 1) : 0;
 		node->w_prnt = 1;
 		i = 0;
 		while (node && i < node->m_w->rows)
@@ -73,14 +73,13 @@ void	ft_print_node(t_file *node, uint64_t *flags)
 			ft_printf("%*s", node->m_w->size_w, node->size);
 		ft_printf(" %s ", node->date);
 	}
-	(*flags & FT_COLOR) ? ft_color_out(node->mod[0], 0) : 0;
+	(*flags & FT_COLOR) ? ft_color_out(node->mod, 0) : 0;
 	ft_printf("%s", node->name ? node->name : node->path);
-	(*flags & FT_COLOR) ? ft_color_out(node->mod[0], 1) : 0;
+	(*flags & FT_COLOR) ? ft_color_out(node->mod, 1) : 0;
 	((*flags & FT_LFRMT) && l_path && readlink(node->path, l_path, 1023) > 0)
 		? ft_printf(" -> %s\n", l_path) : ft_printf("\n");
-	if (*flags & FT_LFRMT && ((*flags & FT_XATTR && node->mod[10] == '@')
-							|| (*flags & FT_ACL && node->mod[10] == '+')))
-		(node->mod[10] == '@') ? ft_print_xattr(node) : ft_print_acl(node);
+	(*flags & FT_LFRMT) && (*flags & FT_XATTR || *flags & FT_ACL)
+		? ft_print_xattr(node, flags) : 0;
 	free(l_path);
 }
 

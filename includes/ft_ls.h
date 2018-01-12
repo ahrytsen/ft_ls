@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 19:10:30 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/11 21:38:44 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/12 13:08:21 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,8 @@ void			ft_grep_helper(t_file *node);
 void			ft_print_node(t_file *node, uint64_t *flags);
 void			ft_print_columns(t_file *node, uint64_t *flags);
 void			ft_del_node(t_file *node);
-void			ft_print_xattr(t_file *node);
-void			ft_print_acl(t_file *node);
+void			ft_print_xattr(t_file *node, uint64_t *flags);
 t_file			*ft_ls_size_sort(t_file *root);
-void			ft_color_out(char dev_t, int mod);
+void			ft_color_out(char *dev_t, int mod);
 
 #endif

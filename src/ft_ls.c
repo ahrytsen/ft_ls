@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/30 14:21:17 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/12 02:34:20 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/12 14:21:00 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static void	ft_flags(char **av, int *i, int *ac, uint64_t *flags)
 		ft_putstr_fd(*av, 2);
 		ft_putstr_fd(": illegal option -- ", 2);
 		ft_putchar_fd(c, 2);
-		ft_putstr_fd("\nusage: ft_ls [-Ralrt1] [file ...]\n", 2);
+		ft_putstr_fd("\nusage: ft_ls [-GRSU@acdefglrtu1] [file ...]\n", 2);
 		exit(1);
 	}
 }
@@ -85,7 +85,7 @@ static void	ft_proc_args(t_file *args, uint64_t *flags, int mod)
 	else if ((mod == 2 || !(args->st.st_mode & S_IFDIR)
 			|| (*flags & FT_DIRASREG)) && !args->w_prnt)
 	{
-		(*flags & FT_COLUMNS)
+		(*flags & FT_COLUMNS && args->m_w->columns > 1)
 			? ft_print_columns(args, flags) : ft_print_node(args, flags);
 		*flags = (*flags & ~FT_IS_FIRST) | FT_SHOW_PATH;
 	}
@@ -114,8 +114,8 @@ void		ft_ls(char *path, uint64_t *flags)
 				lstat(files->path, &(files->st));
 			}
 	dir ? closedir(dir) : 0;
-	files = ft_ls_sort(files, flags);
-	files && (FT_LFRMT & *flags) ? ft_printf("total %d\n", files->m_w->total) : 0;
+	files ? files = ft_ls_sort(files, flags) : 0;
+	files && FT_LFRMT & *flags ? ft_printf("total %d\n", files->m_w->total) : 0;
 	ft_proc_args(files, flags, 2);
 	ft_proc_args(files, flags, ((*flags & FT_RECURS) ? 0 : -1));
 	free(path);
@@ -144,7 +144,7 @@ int			main(int ac, char **av)
 			perror(!av[i - 1][0] && write(2, ": ", 2) ? "" : av[i - 1]);
 		else if (!(errno = 0))
 			ft_bufadd(&args, ft_newnod(ft_strdup(av[i - 1]), &tmp_st));
-	args = ft_ls_sort(args, &flags);
+	args ? args = ft_ls_sort(args, &flags) : 0;
 	ft_proc_args(args, &flags, 1);
 	ft_proc_args(args, &flags, 0);
 	return (errno ? 1 : 0);

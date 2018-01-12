@@ -6,7 +6,7 @@
 /*   By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/07 18:13:22 by ahrytsen          #+#    #+#             */
-/*   Updated: 2018/01/12 03:26:34 by ahrytsen         ###   ########.fr       */
+/*   Updated: 2018/01/12 14:39:17 by ahrytsen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ static void		ft_grep_frmt(t_file *root, uint64_t *flags)
 		if (*flags & FT_LFRMT)
 		{
 			ft_grep_helper(root);
-			(root->acl = acl_get_file(root->path, ACL_TYPE_EXTENDED))
+			(root->acl = acl_get_link_np(root->path, ACL_TYPE_EXTENDED))
 				? root->mod[10] = '+' : 0;
 			if (listxattr(root->path, NULL, 0, XATTR_NOFOLLOW) > 0)
 				root->mod[10] = '@';
@@ -112,19 +112,15 @@ t_file			*ft_ls_sort(t_file *root, uint64_t *flags)
 				: ft_ls_mtime_sort(root);
 	}
 	tmp = root;
-	while (tmp && tmp->next)
+	while (tmp->next)
 	{
 		tmp->next->prev = tmp;
 		tmp = tmp->next;
 	}
-	if (root && (*flags & FT_COLUMNS))
-	{
-		ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-		root->m_w->columns = (uint16_t)w.ws_col / (root->m_w->name_w + 1);
-		root->m_w->rows = root->m_w->columns
-			? root->m_w->count / root->m_w->columns
-			+ ((root->m_w->count % root->m_w->columns > 0) ? 1 : 0)
-			: root->m_w->count;
-	}
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+	root->m_w->columns = (uint16_t)w.ws_col / (root->m_w->name_w + 1);
+	!root->m_w->columns ? root->m_w->columns++ : 0;
+	root->m_w->rows = root->m_w->count / root->m_w->columns
+		+ ((root->m_w->count % root->m_w->columns > 0) ? 1 : 0);
 	return (root);
 }
