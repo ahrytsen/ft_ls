@@ -6,7 +6,7 @@
 #    By: ahrytsen <ahrytsen@student.unit.ua>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/30 18:43:03 by ahrytsen          #+#    #+#              #
-#    Updated: 2018/01/11 16:00:03 by ahrytsen         ###   ########.fr        #
+#    Updated: 2018/01/14 22:31:30 by ahrytsen         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -18,9 +18,9 @@ SUB_MAKE	=	./libftprintf/
 INC_LIB		=	-L./libftprintf -lftprintf
 SRC			=	ft_ls.c ft_ls_buf.c ft_ls_sort.c ft_ls_helpers.c ft_ls_xattr.c \
 				ft_ls_sort_helper.c
+HDR			=	includes/ft_ls.h
 
-OBJ			=	$(SRC:.c=.o)
-OBJS		=	$(OBJ:%=$(DIROBJ)%)
+OBJ			=	$(addprefix $(DIROBJ), $(SRC:.c=.o))
 
 ifdef FLAGS
 	ifeq ($(FLAGS), no)
@@ -40,15 +40,15 @@ ECHO		=	echo
 
 $(NAME)	:		$(OBJ)
 ifdef SUB_MAKE
-				@(cd $(SUB_MAKE) && $(MAKE) -j3)
+				@$(MAKE) -C $(SUB_MAKE) -j3
 endif
-				@$(CC) $(INCLUDE) $(INC_LIB) $(CFLAGS) -Ofast -o $(NAME) $(OBJS)
+				@$(CC) $(INCLUDE) $(INC_LIB) $(CFLAGS) -Ofast -o $(NAME) $(OBJ)
 				@$(ECHO) "\033[31m> \033[32mft_ls: Compiled\033[0m"
 
 clean	:
-				@(cd $(DIROBJ) && $(RM) $(OBJ))
+				@$(RM) $(OBJ)
 ifdef SUB_MAKE
-				@(cd $(SUB_MAKE) && $(MAKE) clean)
+				@$(MAKE) -C $(SUB_MAKE) clean
 endif
 				@$(ECHO) "\033[31m> \033[33mft_ls: Directory cleaned\033[0m"
 
@@ -56,7 +56,7 @@ all		:		$(NAME)
 
 fclean	:		clean
 ifdef SUB_MAKE
-				@(cd $(SUB_MAKE) && $(MAKE) fclean)
+				@$(MAKE) -C $(SUB_MAKE) fclean
 endif
 				-@$(RM) $(NAME)
 				@$(ECHO) "\033[31m> \033[33mft_ls: Remove executable\033[0m"
@@ -65,5 +65,5 @@ re		:		fclean all
 
 .PHONY	:		all clean re
 
-%.o		:		$(DIRSRC)/%.c
-				@$(CC) $(INCLUDE) $(CFLAGS) -Ofast -o $(DIROBJ)/$@ -c $<
+$(OBJ)	:		$(DIROBJ)%.o : $(DIRSRC)%.c $(HDR)
+				@$(CC) $(INCLUDE) $(CFLAGS) -Ofast -o $@ -c $<
